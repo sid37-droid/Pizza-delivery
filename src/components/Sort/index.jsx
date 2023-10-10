@@ -2,14 +2,14 @@
 import { useState } from "react";
 
     //Sort list
-export const list = [
-    {name:'популярности(desc)', sort: 'rating'},
-    {name:'популярности(asc)', sort: '-rating'},
-    {name:'цене(desc)', sort: 'price'},
-    {name:'цене(asc)', sort: '-price'},
-    {name:'алфавиту(desc)', sort: 'title'},
-    {name:'алфавиту(asc)', sort: '-title'}
-]
+    export const list = [
+        {name:'популярности(desc)', sortProperty: 'rating'},
+        {name:'популярности(asc)', sortProperty: '-rating'},
+        {name:'цене(desc)', sortProperty: 'price'},
+        {name:'цене(asc)', sortProperty: '-price'},
+        {name:'алфавиту(desc)', sortProperty: 'title'},
+        {name:'алфавиту(asc)', sortProperty: '-title'}
+    ]
 
 
 function Sort({sortType, setSortType}) {
@@ -33,6 +33,7 @@ function Sort({sortType, setSortType}) {
                     </li>
         })
     }
+
     return (
         <div className="sort">
             <div  className="sort__label">
@@ -59,5 +60,6 @@ function Sort({sortType, setSortType}) {
         </div>
     );
 }
+
 
 export default Sort;

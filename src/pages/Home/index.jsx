@@ -11,7 +11,7 @@ import qs from 'qs'
 //Components
 import Categories from '../../components/Categories';
 import { list } from '../../components/Sort';
-import Sort from '../../components/Sort';
+import Sort  from '../../components/Sort';
 import PizzaBlock from '../../components/PizzaBlock';
 import Skeleton from '../../components/PizzaBlock/Skeleton';
 import Pagination from '../../components/Pagination';
@@ -35,9 +35,9 @@ function Home() {
   const {searchValue} = useContext(AppContext)
 
   //redux selectors
-  const categoriesID = useSelector(state => state.filter.categoryId)
+  const categoryId = useSelector(state => state.filter.categoryId)
   const sortType = useSelector(state => state.filter.sort)
-  const currentPage = useSelector(state => state.filter.curentPage)
+  const curentPage = useSelector(state => state.filter.curentPage)
 
 
     // ScrollUp
@@ -49,21 +49,23 @@ function Home() {
     const [isLoading, setIsLoading] = useState(true);
 
 
-    //Вызывает ошибку (нужно иссправить)
-    
-    // useEffect(()=>{
-    //   if(window.location.search){
-    //     const params = qs.parse(window.location.search.substring(1));
+    // Вызывает ошибку (нужно иссправить)
 
-    //     const sorting = list.find(obj => obj.sort === params.sort)
+    useEffect(()=>{
+      if(window.location.search){
+        const params = qs.parse(window.location.search.substring(1));
+        const sort = list.find(obj => obj.sortProperty === params.sortProperty)
+   
+        params.categoryId = 0;
+        params.curentPage = 1;
+        // console.log(params)
 
-    //     dispatch(setFilters({
-    //       ...params,
-    //       sorting,
-
-    //     }))
-    //   }
-    // }, [])
+        dispatch(setFilters({
+          ...params,
+          sort,
+        }))
+      }
+    }, [])
 
 
 
@@ -73,15 +75,15 @@ function Home() {
       setIsLoading(true);
 
         // Сортировка по категориям
-        const category = categoriesID > 0 ? `category=${categoriesID}` : ''
+        const category = categoryId > 0 ? `category=${categoryId}` : ''
         // Фильтрация
-        const order = sortType.sort.includes("-") ? 'asc' : 'desc';
-        const sortBy = sortType.sort.replace('-', '')
+        const order = sortType.sortProperty.includes("-") ? 'asc' : 'desc';
+        const sortBy = sortType.sortProperty.replace('-', '')
         // Поиск
         const search = searchValue ? `&search=${searchValue}` : '';
 
  
-      axios.get(`https://64a94ae08b9afaf4844a81d6.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
+      axios.get(`https://64a94ae08b9afaf4844a81d6.mockapi.io/items?page=${curentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
       .then((res) => {
         setProduct(res.data);
         setIsLoading(false)
@@ -105,20 +107,19 @@ function Home() {
       });
     
 
-    }, [categoriesID, sortType, searchValue, currentPage]);
+    }, [categoryId, sortType, searchValue, curentPage]);
 
 
   
     useEffect(()=>{
       const queryString = qs.stringify({
-        sort: sortType.sort,
-        categoriesID,
-        currentPage,
+        sortProperty: sortType.sortProperty,
+        categoryId,
+        curentPage,
         searchValue
       });
       navigate(`?${queryString}`)
-      // console.log(queryString)
-    }, [categoriesID, sortType, searchValue, currentPage])
+    }, [categoryId, sortType, searchValue, curentPage])
 
     
     //Рендерим скелетон
@@ -128,8 +129,8 @@ function Home() {
     return (
         <div className="container">
           <div className="content__top">
-              <Categories categoriesID={categoriesID} setCategoriesId={(i) => dispatch(setCategoryID(i))}/>
-              <Sort sortType={sortType} setSortType={(i)=>dispatch(setSort(i))}/>
+              <Categories categoryId={categoryId} setCategoryID={(i) => dispatch(setCategoryID(i))}/>
+              <Sort sortType={sortType} setSortType={i => dispatch(setSort(i))}/>
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">{isLoading ? skeleton : pizzaBlock}</div>
