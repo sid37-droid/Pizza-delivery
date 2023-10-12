@@ -1,5 +1,5 @@
 //React
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -30,6 +30,8 @@ import { setCategoryID, setSort, setCurentPage, setFilters} from '../../redux/sl
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isSearch = useRef(false);
+  const isMount = useRef(false)
 
   //Context import
   const {searchValue} = useContext(AppContext)
@@ -38,51 +40,26 @@ function Home() {
   const categoryId = useSelector(state => state.filter.categoryId)
   const sortType = useSelector(state => state.filter.sort)
   const curentPage = useSelector(state => state.filter.curentPage)
+  console.log("curentPage", curentPage)
 
 
-    // ScrollUp
-    window.scrollTo(0, 0)
-
-    //Products state
-    const [products, setProduct] = useState([]);
-    //Loading flag
-    const [isLoading, setIsLoading] = useState(true);
+  //Products state
+  const [products, setProduct] = useState([]);
+  //Loading flag
+  const [isLoading, setIsLoading] = useState(true);
 
 
-    // Вызывает ошибку (нужно иссправить)
+  const fetchPizzas = ()=>{
+    setIsLoading(true);
 
-    useEffect(()=>{
-      if(window.location.search){
-        const params = qs.parse(window.location.search.substring(1));
-        const sort = list.find(obj => obj.sortProperty === params.sortProperty)
-   
-        params.categoryId = 0;
-        params.curentPage = 1;
-        // console.log(params)
+    // Сортировка по категориям
+    const category = categoryId > 0 ? `category=${categoryId}` : ''
+    // Фильтрация
+    const order = sortType.sortProperty.includes("-") ? 'asc' : 'desc';
+    const sortBy = sortType.sortProperty.replace('-', '')
+    // Поиск
+    const search = searchValue ? `&search=${searchValue}` : '';
 
-        dispatch(setFilters({
-          ...params,
-          sort,
-        }))
-      }
-    }, [])
-
-
-
-
-    useEffect(() => {
-      //Устанавливаем флаг на true перед получением данных для отображения скелетона.
-      setIsLoading(true);
-
-        // Сортировка по категориям
-        const category = categoryId > 0 ? `category=${categoryId}` : ''
-        // Фильтрация
-        const order = sortType.sortProperty.includes("-") ? 'asc' : 'desc';
-        const sortBy = sortType.sortProperty.replace('-', '')
-        // Поиск
-        const search = searchValue ? `&search=${searchValue}` : '';
-
- 
       axios.get(`https://64a94ae08b9afaf4844a81d6.mockapi.io/items?page=${curentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
       .then((res) => {
         setProduct(res.data);
@@ -105,13 +82,15 @@ function Home() {
         }
         console.log(error.config);
       });
-    
-
-    }, [categoryId, sortType, searchValue, curentPage]);
 
 
-  
-    useEffect(()=>{
+  }
+
+
+  useEffect(()=>{
+
+
+    if(isMount.current){
       const queryString = qs.stringify({
         sortProperty: sortType.sortProperty,
         categoryId,
@@ -119,7 +98,39 @@ function Home() {
         searchValue
       });
       navigate(`?${queryString}`)
-    }, [categoryId, sortType, searchValue, curentPage])
+    }
+    isMount.current = true
+  }, [categoryId, sortType, searchValue, curentPage])
+
+  useEffect(()=>{
+    if(window.location.search){
+      const params = qs.parse(window.location.search.substring(1));
+      const sort = list.find(obj => obj.sortProperty === params.sortProperty) 
+
+      dispatch(setFilters({
+        ...params,
+        sort,
+      }))
+      isSearch.current = true
+    }
+  }, [])
+
+  useEffect(() => {
+    // ScrollUp
+    window.scrollTo(0, 0)
+    if(!isSearch.current){
+      fetchPizzas();
+    }
+    isSearch.current = false
+
+  }, [categoryId, sortType, searchValue, curentPage]);
+
+
+
+
+
+
+
 
     
     //Рендерим скелетон
@@ -134,7 +145,7 @@ function Home() {
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">{isLoading ? skeleton : pizzaBlock}</div>
-          <Pagination onChangePage={number => dispatch(setCurentPage(number))}/>
+          <Pagination curentPage={curentPage} onChangePage={number => dispatch(setCurentPage(number))}/>
         </div>
      );
 };
