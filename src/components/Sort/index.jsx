@@ -1,4 +1,5 @@
 //React
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 
     //Sort list
@@ -17,11 +18,24 @@ function Sort({sortType, setSortType}) {
     //OpenClose sort list
     const [open, setOpen] = useState(false)
 
+    const sortRef = useRef()
+
     //Choose sort item and close sort list
     const filterClick = (index)=>{
         setSortType(index)
         setOpen(!open)
     }
+
+    useEffect(()=>{
+       const handleClickOutside = (event)=>{
+            if(event.target != sortRef.current && open){
+                setOpen(!open)
+            }
+        }
+        document.body.addEventListener('click', handleClickOutside);
+
+        return () => document.body.removeEventListener('click', handleClickOutside)
+    }, [open])
 
     //Sort list render
     const listRender = ()=>{
@@ -35,7 +49,7 @@ function Sort({sortType, setSortType}) {
     }
 
     return (
-        <div className="sort">
+        <div  className="sort">
             <div  className="sort__label">
             <svg
                 width="10"
@@ -49,7 +63,7 @@ function Sort({sortType, setSortType}) {
                 />
             </svg>
             <b>Сортировка по:</b>
-            <span onClick={()=>{setOpen(!open)}}>{sortType.name}</span>
+            <span ref={sortRef} onClick={()=>{setOpen(!open)}}>{sortType.name}</span>
             </div>
             {open && <div className="sort__popup">
             <ul>

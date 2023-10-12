@@ -40,8 +40,6 @@ function Home() {
   const categoryId = useSelector(state => state.filter.categoryId)
   const sortType = useSelector(state => state.filter.sort)
   const curentPage = useSelector(state => state.filter.curentPage)
-  console.log("curentPage", curentPage)
-
 
   //Products state
   const [products, setProduct] = useState([]);
@@ -88,8 +86,6 @@ function Home() {
 
 
   useEffect(()=>{
-
-
     if(isMount.current){
       const queryString = qs.stringify({
         sortProperty: sortType.sortProperty,
@@ -125,14 +121,6 @@ function Home() {
 
   }, [categoryId, sortType, searchValue, curentPage]);
 
-
-
-
-
-
-
-
-    
     //Рендерим скелетон
     const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />)
     //Рендерим экомпонент с пиццами
