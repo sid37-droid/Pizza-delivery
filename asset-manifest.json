@@ -1,14 +1,15 @@
 {
   "files": {
-    "main.css": "/Pizza-delivery/static/css/main.5592b901.css",
-    "main.js": "/Pizza-delivery/static/js/main.27e891c2.js",
+    "main.css": "/Pizza-delivery/static/css/main.532a5294.css",
+    "main.js": "/Pizza-delivery/static/js/main.994a24e7.js",
+    "static/media/empty-cart.png": "/Pizza-delivery/static/media/empty-cart.db905d1f4b063162f25b.png",
     "static/media/pizza-logo.svg": "/Pizza-delivery/static/media/pizza-logo.56ac87032d8f6fdf863326acd06c0d97.svg",
     "index.html": "/Pizza-delivery/index.html",
-    "main.5592b901.css.map": "/Pizza-delivery/static/css/main.5592b901.css.map",
-    "main.27e891c2.js.map": "/Pizza-delivery/static/js/main.27e891c2.js.map"
+    "main.532a5294.css.map": "/Pizza-delivery/static/css/main.532a5294.css.map",
+    "main.994a24e7.js.map": "/Pizza-delivery/static/js/main.994a24e7.js.map"
   },
   "entrypoints": [
-    "static/css/main.5592b901.css",
-    "static/js/main.27e891c2.js"
+    "static/css/main.532a5294.css",
+    "static/js/main.994a24e7.js"
   ]
 }
