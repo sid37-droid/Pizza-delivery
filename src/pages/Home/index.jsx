@@ -4,34 +4,36 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // axios
-import axios from 'axios';
-
+// import axios from 'axios';
 import qs from 'qs'
 
 //Components
 import Categories from '../../components/Categories';
 import { list } from '../../components/Sort';
 import Sort  from '../../components/Sort';
-import PizzaBlock from '../../components/PizzaBlock';
-import Skeleton from '../../components/PizzaBlock/Skeleton';
+import ProductBlock from '../../components/ProductBlock';
+import Skeleton from '../../components/ProductBlock/Skeleton';
 import Pagination from '../../components/Pagination';
 
 //Context
 import { AppContext } from '../../App';
-
 
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryID, setSort, setCurentPage, setFilters} from '../../redux/slices/filterSlice';
 
 
+import { fetchProduct } from '../../redux/slices/productSlice';
+import NotFound from '../notFound';
+
 
 
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const isSearch = useRef(false);
-  const isMount = useRef(false)
+  const isMount = useRef(false);
 
   //Context import
   const {searchValue} = useContext(AppContext)
@@ -41,14 +43,13 @@ function Home() {
   const sortType = useSelector(state => state.filter.sort)
   const curentPage = useSelector(state => state.filter.curentPage)
 
-  //Products state
-  const [products, setProduct] = useState([]);
-  //Loading flag
-  const [isLoading, setIsLoading] = useState(true);
+  const {items, status} = useSelector(state => state.product)
+
+  // const [isLoading, setIsLoading] = useState(true);
 
 
-  const fetchPizzas = ()=>{
-    setIsLoading(true);
+  const getProduct = async ()=>{
+    // setIsLoading(true);
 
     // Сортировка по категориям
     const category = categoryId > 0 ? `category=${categoryId}` : ''
@@ -58,30 +59,16 @@ function Home() {
     // Поиск
     const search = searchValue ? `&search=${searchValue}` : '';
 
-      axios.get(`https://64a94ae08b9afaf4844a81d6.mockapi.io/items?page=${curentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
-      .then((res) => {
-        setProduct(res.data);
-        setIsLoading(false)
-      }).catch(function (error) {
-        if (error.response) {
-          // Запрос был сделан, и сервер ответил кодом состояния, который
-          // выходит за пределы 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // Запрос был сделан, но ответ не получен
-          // `error.request`- это экземпляр XMLHttpRequest в браузере и экземпляр
-          // http.ClientRequest в node.js
-          console.log(error.request, "ошибка");
-        } else {
-          // Произошло что-то при настройке запроса, вызвавшее ошибку
-          console.log('Error', error.message);
-        }
-        console.log(error.config);
-      });
 
+   dispatch(fetchProduct({
+        category,
+        order,
+        sortBy,
+        search,
+        curentPage
+      }));
 
+    window.scrollTo(0, 0)
   }
 
 
@@ -112,19 +99,21 @@ function Home() {
   }, [])
 
   useEffect(() => {
-    // ScrollUp
-    window.scrollTo(0, 0)
     if(!isSearch.current){
-      fetchPizzas();
+      getProduct();
     }
     isSearch.current = false
-
   }, [categoryId, sortType, searchValue, curentPage]);
 
     //Рендерим скелетон
     const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />)
     //Рендерим экомпонент с пиццами
-    const pizzaBlock = products.map((items) => <PizzaBlock key={items.id} items={items} />)
+    const productBlock = items.map((items) => <ProductBlock key={items.id} items={items} />)
+
+    if(status === 'error'){
+      return <NotFound/>
+    }
+
     return (
         <div className="container">
           <div className="content__top">
@@ -132,7 +121,7 @@ function Home() {
               <Sort sortType={sortType} setSortType={i => dispatch(setSort(i))}/>
           </div>
           <h2 className="content__title">Все пиццы</h2>
-          <div className="content__items">{isLoading ? skeleton : pizzaBlock}</div>
+          <div className="content__items">{status === 'loading' ? skeleton : productBlock}</div>
           <Pagination curentPage={curentPage} onChangePage={number => dispatch(setCurentPage(number))}/>
         </div>
      );

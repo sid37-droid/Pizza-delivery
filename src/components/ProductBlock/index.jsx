@@ -1,12 +1,39 @@
 import { useState } from "react"
+//Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { addItem, removeItem, clearItems} from '../../redux/slices/cartSlice';
 
-function PizzaBlock({items}) {
+
+
+function ProductBlock({items}) {
     const {name, imageUrl, price, sizes, types, id} = items
+
+    const cartItem = useSelector((state)=> state.cart.items.find((obj)=> obj.id === id))
+
+    const addedCount = cartItem ? cartItem.count : 0;
 
     const typesName = ["тонкое", "традиционное"];
     // функция размера пиц
     const [activeSize, setActiveSize] = useState(0)
     const [activeType, setActiveType] = useState(0)
+
+    const dispatch = useDispatch();
+
+    // const products = useSelector(state => state.cart.items)
+
+    const products = {
+        id,
+        name,
+        imageUrl,
+        price,
+        activeType,
+        sizes,
+        activeSize,
+    }
+    
+    // const onClickAdd = ()=>{
+    //     item
+    // }
 
     // рендер списка разммеров пиц
     const sizesList = ()=>{
@@ -28,7 +55,7 @@ function PizzaBlock({items}) {
             <img
             className="pizza-block__image"
             src={imageUrl}
-            alt="Pizza"
+            alt="Item"
             />
             <h4 className="pizza-block__title">{name}</h4>
             <div className="pizza-block__selector">
@@ -41,7 +68,7 @@ function PizzaBlock({items}) {
             </div>
             <div className="pizza-block__bottom">
             <div className="pizza-block__price">от {price} ₽</div>
-            <button className="button button--outline button--add">
+            <button onClick={() => dispatch(addItem(products))} className="button button--outline button--add">
                 <svg
                 width="12"
                 height="12"
@@ -54,7 +81,7 @@ function PizzaBlock({items}) {
                 />
                 </svg>
                 <span>Добавить</span>
-                <i>1</i>
+                {addedCount > 0 && <i>{addedCount}</i>}
             </button>
             </div>
         </div>
@@ -62,4 +89,4 @@ function PizzaBlock({items}) {
      );
 }
 
-export default PizzaBlock;
+export default ProductBlock;
