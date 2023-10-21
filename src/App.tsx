@@ -1,11 +1,7 @@
-//React
-import React from 'react';
-
 //react-router-dom
 import { Routes, Route } from 'react-router-dom';
 
 // Copmponents
-import Header from './components/Header';
 import Home from './pages/Home';
 import NotFound from './pages/notFound';
 import Cart from './pages/Cart';

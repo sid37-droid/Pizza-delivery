@@ -1,10 +1,15 @@
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-function FullProduct() {
+const FullProduct: React.FC = ()=> {
 
-    const [product, setProduct] = useState();
+    const [product, setProduct] = useState<{
+        imageUrl:string,
+        name: string,
+        price:number
+    }>();
 
     const {id} = useParams();
     const navigate = useNavigate();
@@ -25,14 +30,13 @@ function FullProduct() {
 
 
     if(!product){
-        return 'Загрузка...'
+        return <>'Загрузка...'</>
     }
 
     return (  
         <div className="container">
             <img src={product.imageUrl} alt="" />
             <h2>{product.name}</h2>
-
             <h4>{product.price} ₽</h4>
         </div>
 

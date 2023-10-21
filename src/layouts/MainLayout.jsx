@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
 
 
-function MainLayout({children}) {
+function MainLayout() {
     return ( 
         <div className="wrapper">
             <Header/>
