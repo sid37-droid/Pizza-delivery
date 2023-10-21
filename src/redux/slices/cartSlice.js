@@ -11,11 +11,6 @@ export const cartSlices = createSlice({
   reducers: {
     addItem: (state, action) => {
       const findItemId = state.items.find((obj) => obj.id === action.payload.id);
-
-      //   const item = state.items.filter((obj) => obj.id === action.payload.id)
-      //   const findItemSize = state.items.find((obj) => obj.activeSize === action.payload.activeSize);
-      //   const findItemType = state.items.find((obj) => obj.activeType === action.payload.activeType);
-
       if (findItemId) {
         findItemId.count++;
       } else {
@@ -57,6 +52,8 @@ export const cartSlices = createSlice({
     },
   },
 });
+
+export const selectCart = (state) => state.cart
 
 export const { addItem, removeItem, clearItems, minusItem, plusItem } = cartSlices.actions;
 

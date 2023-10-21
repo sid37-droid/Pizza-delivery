@@ -2,6 +2,7 @@ import { useState } from "react"
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { addItem, removeItem, clearItems} from '../../redux/slices/cartSlice';
+import { Link } from "react-router-dom";
 
 
 
@@ -19,8 +20,6 @@ function ProductBlock({items}) {
 
     const dispatch = useDispatch();
 
-    // const products = useSelector(state => state.cart.items)
-
     const products = {
         id,
         name,
@@ -30,11 +29,6 @@ function ProductBlock({items}) {
         sizes,
         activeSize,
     }
-    
-    // const onClickAdd = ()=>{
-    //     item
-    // }
-
     // рендер списка разммеров пиц
     const sizesList = ()=>{
         return sizes.map((size, i)=>(
@@ -52,11 +46,13 @@ function ProductBlock({items}) {
     return ( 
         <div className="pizza-block-wrapper">
             <div className="pizza-block">
-            <img
-            className="pizza-block__image"
-            src={imageUrl}
-            alt="Item"
-            />
+            <Link to={'product/' + id}>
+                <img
+                className="pizza-block__image"
+                src={imageUrl}
+                alt="Item"
+                />
+            </Link>
             <h4 className="pizza-block__title">{name}</h4>
             <div className="pizza-block__selector">
             <ul>

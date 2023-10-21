@@ -1,10 +1,8 @@
 //React
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useEffect, useRef} from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-// axios
-// import axios from 'axios';
 import qs from 'qs'
 
 //Components
@@ -15,15 +13,12 @@ import ProductBlock from '../../components/ProductBlock';
 import Skeleton from '../../components/ProductBlock/Skeleton';
 import Pagination from '../../components/Pagination';
 
-//Context
-import { AppContext } from '../../App';
-
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryID, setSort, setCurentPage, setFilters} from '../../redux/slices/filterSlice';
+import { setCategoryID, setSort, setCurentPage, setFilters, selectFilter} from '../../redux/slices/filterSlice';
 
 
-import { fetchProduct } from '../../redux/slices/productSlice';
+import { fetchProduct, selectProduct } from '../../redux/slices/productSlice';
 import NotFound from '../notFound';
 
 
@@ -35,22 +30,11 @@ function Home() {
   const isSearch = useRef(false);
   const isMount = useRef(false);
 
-  //Context import
-  const {searchValue} = useContext(AppContext)
-
   //redux selectors
-  const categoryId = useSelector(state => state.filter.categoryId)
-  const sortType = useSelector(state => state.filter.sort)
-  const curentPage = useSelector(state => state.filter.curentPage)
-
-  const {items, status} = useSelector(state => state.product)
-
-  // const [isLoading, setIsLoading] = useState(true);
-
+  const {categoryId, curentPage, sort:sortType, searchValue} = useSelector(selectFilter)
+  const {items, status} = useSelector(selectProduct)
 
   const getProduct = async ()=>{
-    // setIsLoading(true);
-
     // Сортировка по категориям
     const category = categoryId > 0 ? `category=${categoryId}` : ''
     // Фильтрация
@@ -59,7 +43,6 @@ function Home() {
     // Поиск
     const search = searchValue ? `&search=${searchValue}` : '';
 
-
    dispatch(fetchProduct({
         category,
         order,
@@ -67,10 +50,8 @@ function Home() {
         search,
         curentPage
       }));
-
     window.scrollTo(0, 0)
   }
-
 
   useEffect(()=>{
     if(isMount.current){
@@ -107,8 +88,8 @@ function Home() {
 
     //Рендерим скелетон
     const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-    //Рендерим экомпонент с пиццами
-    const productBlock = items.map((items) => <ProductBlock key={items.id} items={items} />)
+    //Рендерим компонент с пиццами
+    const productBlock = items.map((items) => <ProductBlock key={items.id} items={items}/>)
 
     if(status === 'error'){
       return <NotFound/>

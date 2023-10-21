@@ -2,13 +2,18 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import axios from 'axios';
 
-export const fetchProduct = createAsyncThunk('pizzas/fetchProductStatus', async (params) => {
-  const { category, order, sortBy, search, curentPage } = params;
-  const { data } = await axios.get(
-    `https://64a94ae08b9afaf4844a81d6.mockapi.io/items?page=${curentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
-  );
-  return data;
-});
+export const fetchProduct = createAsyncThunk(
+  'pizzas/fetchProductStatus',
+  async (params, thunkAPI) => {
+    const { category, order, sortBy, search, curentPage } = params;
+    const { data } = await axios.get(
+      `https://64a94ae08b9afaf4844a81d6.mockapi.io/items?page=${curentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
+    );
+
+    console.log(thunkAPI.getState());
+    return data;
+  },
+);
 
 const initialState = {
   items: [],
@@ -16,7 +21,7 @@ const initialState = {
 };
 
 export const productSlice = createSlice({
-  name: 'products',
+  name: 'product',
   initialState,
   reducers: {
     setProduct: (state, action) => {
@@ -26,6 +31,7 @@ export const productSlice = createSlice({
   extraReducers: {
     [fetchProduct.pending]: (state) => {
       state.status = 'loading';
+      console.log('loading')
       state.items = [];
     },
     [fetchProduct.fulfilled]: (state, action) => {
@@ -38,6 +44,8 @@ export const productSlice = createSlice({
     },
   },
 });
+
+export const selectProduct = state => state.product
 
 export const { setProduct } = productSlice.actions;
 
