@@ -8,10 +8,10 @@ import Search from '../Search';
 import { useSelector } from 'react-redux';
 import { selectCart } from '../../redux/slices/cartSlice';
 
-function Header() {
+const Header:React.FC = ()=> {
 
   const {items, totalPrice} = useSelector(selectCart)
-  const totalCount = items.reduce((sum, item)=> sum + item.count, 0)
+  const totalCount = items.reduce((sum:number, item:{count:number})=> sum + item.count, 0)
 
   const {pathname} = useLocation()
 

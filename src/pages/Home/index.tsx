@@ -1,7 +1,7 @@
 //React
-import { useEffect, useRef} from 'react';
+import React, { useEffect, useRef} from 'react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import qs from 'qs'
 
@@ -15,15 +15,14 @@ import Pagination from '../../components/Pagination';
 
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryID, setSort, setCurentPage, setFilters, selectFilter} from '../../redux/slices/filterSlice';
+import { setSort, setCurentPage, setFilters, selectFilter} from '../../redux/slices/filterSlice';
 
 
 import { fetchProduct, selectProduct } from '../../redux/slices/productSlice';
 import NotFound from '../notFound';
 
 
-
-function Home() {
+const Home:React.FC = ()=> {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -43,7 +42,9 @@ function Home() {
     // Поиск
     const search = searchValue ? `&search=${searchValue}` : '';
 
-   dispatch(fetchProduct({
+   dispatch(
+    //@ts-ignore
+    fetchProduct({
         category,
         order,
         sortBy,
@@ -89,7 +90,7 @@ function Home() {
     //Рендерим скелетон
     const skeleton = [...new Array(6)].map((_, index) => <Skeleton key={index} />)
     //Рендерим компонент с пиццами
-    const productBlock = items.map((items) => <ProductBlock key={items.id} items={items}/>)
+    const productBlock = items.map((items:any) => <ProductBlock key={items.id} items={items}/>)
 
     if(status === 'error'){
       return <NotFound/>
@@ -98,12 +99,12 @@ function Home() {
     return (
         <div className="container">
           <div className="content__top">
-              <Categories categoryId={categoryId} setCategoryID={(i) => dispatch(setCategoryID(i))}/>
-              <Sort sortType={sortType} setSortType={i => dispatch(setSort(i))}/>
+              <Categories/>
+              <Sort/>
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">{status === 'loading' ? skeleton : productBlock}</div>
-          <Pagination curentPage={curentPage} onChangePage={number => dispatch(setCurentPage(number))}/>
+          <Pagination curentPage={curentPage} onChangePage={(number:number) => dispatch(setCurentPage(number))}/>
         </div>
      );
 };

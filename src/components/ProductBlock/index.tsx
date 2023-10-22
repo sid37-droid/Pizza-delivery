@@ -1,22 +1,35 @@
+import React from "react";
 import { useState } from "react"
+
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
-import { addItem, removeItem, clearItems} from '../../redux/slices/cartSlice';
+import { addItem } from '../../redux/slices/cartSlice';
 import { Link } from "react-router-dom";
 
+type ItemsType = {
+    items:{
+        name: string; 
+        imageUrl: string;
+        price: number; 
+        id:string;
+        sizes: [];
+        types:[number];
+    }
+}
 
 
-function ProductBlock({items}) {
+const ProductBlock: React.FC<ItemsType> = ({items})=> {
     const {name, imageUrl, price, sizes, types, id} = items
-
-    const cartItem = useSelector((state)=> state.cart.items.find((obj)=> obj.id === id))
-
+    const cartItem = useSelector((state:any)=> state.cart.items.find((obj:{id:string})=> obj.id === id))
     const addedCount = cartItem ? cartItem.count : 0;
-
     const typesName = ["тонкое", "традиционное"];
     // функция размера пиц
+
+
     const [activeSize, setActiveSize] = useState(0)
-    const [activeType, setActiveType] = useState(0)
+    const [activeType, setActiveType] = useState(types.length < 2 ? types[0] : 0)
+    console.log(types)
+
 
     const dispatch = useDispatch();
 
@@ -31,7 +44,7 @@ function ProductBlock({items}) {
     }
     // рендер списка разммеров пиц
     const sizesList = ()=>{
-        return sizes.map((size, i)=>(
+        return sizes.map((size:number, i:number)=>(
             <li onClick={()=>{setActiveSize(i)}} key={i}  className={activeSize === i ? 'active' : ''}>{size}</li>
         ))
     }

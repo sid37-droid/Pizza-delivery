@@ -1,13 +1,24 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {plusItem, minusItem, removeItem, selectCart} from '../../redux/slices/cartSlice';
 
-function CartProduct() {
+const CartProduct: React.FC = ()=> {
     const typesName = ["тонкое", "традиционное"];
     
     const {items} = useSelector(selectCart)
     
+    type Item = {
+      name:string;
+      id:string;
+      imageUrl:string;
+      count:number;
+      activeType: number;
+      activeSize: number;
+      price:number;
+      sizes:[]
+    };
+
     const dispatch = useDispatch();
-      return items.map(item => (
+      return items.map((item:Item) => (
         <div className="cart__item">
           <div className="cart__item-img">
             <img

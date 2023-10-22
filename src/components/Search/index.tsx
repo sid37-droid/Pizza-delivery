@@ -1,5 +1,5 @@
 //React
-import { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 //lodash.dabounce
 import debounce from 'lodash.debounce';
@@ -13,16 +13,16 @@ import { setSearchValue } from '../../redux/slices/filterSlice';
 
 
 
-function Search() {
+const Search: React.FC = ()=> {
     const dispatch = useDispatch()
     const [value, setValue] = useState('')
 
     const updateSearchValue = useCallback(
-        debounce((str)=>{
+        debounce((str:string)=>{
          dispatch(setSearchValue(str))
         },250),[])
 
-    const onChangeInput = event => {
+    const onChangeInput = (event:any) => {
         setValue(event.target.value);
         updateSearchValue(event.target.value)
     }

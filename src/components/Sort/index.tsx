@@ -1,33 +1,40 @@
 //React
 import { useEffect, useRef } from "react";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import {selectFilter, setSort} from '../../redux/slices/filterSlice';
+
+
+    type SortItem = {
+        name:string;
+        sortProperty: string;
+    };
 
     //Sort list
-    export const list = [
+    export const list:SortItem[] = [
         {name:'популярности(desc)', sortProperty: 'rating'},
         {name:'популярности(asc)', sortProperty: '-rating'},
         {name:'цене(desc)', sortProperty: 'price'},
         {name:'цене(asc)', sortProperty: '-price'},
         {name:'алфавиту(desc)', sortProperty: 'title'},
-        {name:'алфавиту(asc)', sortProperty: '-title'}
+        {name:'алфавиту(asc)', sortProperty: '-title'},
     ]
 
 
-function Sort({sortType, setSortType}) {
-
+const Sort:React.FC = ()=> {
+    const dispatch = useDispatch();
+    const {sort} = useSelector(selectFilter)
     //OpenClose sort list
     const [open, setOpen] = useState(false)
-
-    const sortRef = useRef()
-
+    const sortRef = useRef(null)
     //Choose sort item and close sort list
-    const filterClick = (index)=>{
-        setSortType(index)
+    const filterClick = (index:string)=>{
+        dispatch(setSort(index))
         setOpen(!open)
     }
-
     useEffect(()=>{
-       const handleClickOutside = (event)=>{
+       const handleClickOutside = (event: any)=>{
             if(event.target != sortRef.current && open){
                 setOpen(!open)
             }
@@ -39,10 +46,10 @@ function Sort({sortType, setSortType}) {
 
     //Sort list render
     const listRender = ()=>{
-        return list.map((item, i)=>{
+        return list.map((item:any, i)=>{
                     return <li 
                         onClick={()=> filterClick(item)} 
-                        className={sortType.name === list[i].name ? 'active' : ''} 
+                        className={sort.name === list[i].name ? 'active' : ''} 
                         key={i}>{item.name}
                     </li>
         })
@@ -63,7 +70,7 @@ function Sort({sortType, setSortType}) {
                 />
             </svg>
             <b>Сортировка по:</b>
-            <span ref={sortRef} onClick={()=>{setOpen(!open)}}>{sortType.name}</span>
+            <span ref={sortRef} onClick={()=>{setOpen(!open)}}>{sort.name}</span>
             </div>
             {open && <div className="sort__popup">
             <ul>

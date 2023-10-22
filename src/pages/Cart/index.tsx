@@ -5,12 +5,12 @@ import {clearItems, selectCart} from '../../redux/slices/cartSlice';
 import CartEmpty from '../../components/CartEmpty';
 import CartProduct from '../../components/CartProduct';
 
-function Cart() {
+const Cart: React.FC = ()=> {
 
     
   const {items, totalPrice} = useSelector(selectCart)
 
-  const totalCount = items.reduce((sum, item)=> sum + item.count, 0)
+  const totalCount = items.reduce((sum:number, item:{count:number})=> sum + item.count, 0)
 
   const dispatch = useDispatch();
 
